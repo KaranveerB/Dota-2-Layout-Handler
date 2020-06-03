@@ -28,3 +28,6 @@ hs_err_pid*
 .classpath
 .project
 .settings/*
+
+# Test Configurations
+/test_config/Hero Config Backups/*
