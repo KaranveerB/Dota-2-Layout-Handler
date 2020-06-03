@@ -2,28 +2,73 @@ package handler;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class ConfigHandler {
-	public void handleConfig(String importConfigPath, String exportConfigPath) {
-		File importConfig = new File(importConfigPath);
-		File exportConfig = new File(exportConfigPath);
 
-		checkIfFilesExist(importConfig, exportConfig);
+	public void handleConfig(String importConfigPath, String exportConfigPath) {
+		File importConfigFile = new File(importConfigPath);
+		File exportConfigFile = new File(exportConfigPath);
+
+		checkIfFilesExist(importConfigFile, exportConfigFile);
+
+		try {
+			FileHandler.createBackup(exportConfigFile);
+			System.out.println("\nBackup created successfully");
+		} catch (IOException e) {
+			System.out.println("\nWarning: Failed to create backup. Proceed with caution");
+		}
+
+		String errorMsg = ""; // Error message if configs can't be parsed
+		// Shown after printing layout names for readability
+
+		ConfigFile importConfig;
+		ConfigFile exportConfig;
+
+		// Index of *LayoutNames corresponds to index of Layouts in ConfigFile.java
+		String[] importLayoutNames;
+		String[] exportLayoutNames;
+
+		// Parse files and print out config names
+		try {
+			importConfig = new ConfigFile(importConfigFile);
+			importLayoutNames = importConfig.getLayoutNames();
+			System.out.println("\n-- Import Configs --");
+
+			for (String layoutName : importLayoutNames) {
+				System.out.println(layoutName);
+			}
+
+		} catch (Exception e) {
+			errorMsg = "\nError: Couldn't parse import config file";
+		}
+
+		try {
+			exportConfig = new ConfigFile(exportConfigFile);
+			exportLayoutNames = exportConfig.getLayoutNames();
+			System.out.println("\n-- Export Configs --");
+
+			for (String layoutName : exportLayoutNames) {
+				System.out.println(layoutName);
+			}
+
+		} catch (Exception e) {
+			errorMsg += "\nError: Couldn't parse export config file";
+		}
+
+		if (!errorMsg.isEmpty()) {
+			System.out.println(errorMsg);
+			System.exit(1);
+		}
 
 	}
 
-	// Check if files exist. Error if at least one does not
-	private void checkIfFilesExist(File importConfig, File exportConfig) {
+	private void checkIfFilesExist(File importConfigFile, File exportConfigFile) {
 		String errorMsg = "";
 
-		if (!importConfig.isFile()) {
-			errorMsg += "\nError: Could not find config";
+		if (!importConfigFile.isFile()) {
+			errorMsg += "\nError: Could not find import config";
 		}
-		if (!exportConfig.isFile()) {
+		if (!exportConfigFile.isFile()) {
 			errorMsg += "\nError: Could not find export config";
 		}
 
@@ -36,20 +81,4 @@ public class ConfigHandler {
 		return;
 	}
 
-	// Get configuration names
-	protected static String[] getConfigNames(JSONArray jsonArr) {
-		Iterator<Object> iterator = jsonArr.iterator();
-		JSONObject[] configs = new JSONObject[jsonArr.length()];
-
-		for (int i = 0; iterator.hasNext(); i++) {
-			configs[i] = (JSONObject) iterator.next();
-		}
-
-		String[] configNames = new String[jsonArr.length()];
-
-		for (int i = 0; i < configs.length; i++)
-			configNames[i] = (String) configs[i].get("config_name");
-		return configNames;
-
-	}
 }
