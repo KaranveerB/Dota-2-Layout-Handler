@@ -8,7 +8,7 @@ public class Main {
 			System.out.println("Invalid command.\n" + "usage: D2LH <import config> <export config>");
 			System.exit(1);
 		} else {
-			System.out.printf("Importing from: %s\nExporting to: %s\n", args[0], args[1]);
+			System.out.printf("Importing from: %s\nExporting to: %s\n.", args[0], args[1]);
 			ConfigHandler ch = new ConfigHandler();
 			ch.handleConfigs(args[0], args[1]);
 		}

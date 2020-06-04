@@ -2,6 +2,7 @@ package handler;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class ConfigHandler {
 
@@ -13,9 +14,9 @@ public class ConfigHandler {
 
 		try {
 			FileHandler.createBackup(exportConfigFile);
-			System.out.println("\nBackup created successfully");
+			System.out.println("\nBackup created successfully.");
 		} catch (IOException e) {
-			System.out.println("\nWarning: Failed to create backup. Proceed with caution");
+			System.out.println("\nWarning: Failed to create backup. Proceed with caution.");
 		}
 
 		String errorMsg = ""; // Error message if configs can't be parsed
@@ -24,19 +25,19 @@ public class ConfigHandler {
 		Config importConfig = null;
 		Config exportConfig = null;
 
-		// Parse files and print out config names
+		// Parse files and print out layout names
 		try {
 			importConfig = new Config(importConfigFile);
 			ConfigHandler.printLayoutNames(importConfig, "Import");
 		} catch (Exception e) {
-			errorMsg = "\nError: Couldn't parse import config file";
+			errorMsg = "\nError: Couldn't parse import config file.";
 		}
 
 		try {
 			exportConfig = new Config(exportConfigFile);
 			ConfigHandler.printLayoutNames(exportConfig, "Export");
 		} catch (Exception e) {
-			errorMsg += "\nError: Couldn't parse export config file";
+			errorMsg += "\nError: Couldn't parse export config file.";
 		}
 
 		if (!errorMsg.isEmpty()) {
@@ -45,8 +46,45 @@ public class ConfigHandler {
 		}
 
 		if (importConfig.containsRepeats() || exportConfig.containsRepeats()) {
-			System.out.println("\nError: Duplicate layout names detected. This is not supported by Dota 2\n"
-					+ "Please create a new configuration or manually repair the old one");
+			System.out.println("\nError: Existing duplicate layout names detected. This is not supported by Dota 2.\n"
+					+ "Please create a new configuration or manually repair the old one.");
+		}
+
+		boolean continueExecution = true;
+		while (continueExecution) {
+			Scanner sc = new Scanner(System.in);
+
+			String layoutToExport = "";
+
+			while (layoutToExport.equals("")) {
+				String selectedLayout = promptForLayoutToExport(sc);
+
+				if (!importConfig.containsLayout(selectedLayout)) {
+					System.out.println(
+							"\nError: Layout could not be found. Ensure the layout name entered is one of the following.");
+					try {
+						ConfigHandler.printLayoutNames(importConfig, "Import");
+					} catch (Exception e) {
+						System.out.println("\nError: Couldn't parse import config file.");
+					}
+					continue;
+				}
+
+				if (!exportConfig.containsLayout(selectedLayout)) {
+					layoutToExport = selectedLayout;
+				} else {
+					System.out.println(
+							"\nError: Exporting layout would result in repeat layout names. This is not supported by Dota 2.\n"
+									+ "Please manually change the name(s) of the relevent configuration(s) to avoid repeats.");
+				}
+			}
+
+			// TODO: Export the layout
+
+			System.out.print("\nExport another layout? y/N");
+			if (!sc.nextLine().toLowerCase().equals("y")) {
+				System.out.println("\nExiting");
+			}
 		}
 
 	}
@@ -78,6 +116,11 @@ public class ConfigHandler {
 		for (String layoutName : importLayoutNames) {
 			System.out.println(layoutName);
 		}
+	}
+
+	private static String promptForLayoutToExport(Scanner sc) {
+		System.out.print("\nEnter config to transfer: ");
+		return sc.nextLine().trim();
 	}
 
 }

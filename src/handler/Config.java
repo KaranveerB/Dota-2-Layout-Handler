@@ -48,15 +48,25 @@ public class Config {
 		return layoutNames;
 	}
 
+	public boolean containsLayout(String newLayoutName) {
+		for (String layoutName : this.getLayoutNames()) {
+			if (newLayoutName.equals(layoutName)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public boolean containsRepeats() {
-		String[] layoutNames = this.getLayoutNames();
+		String[] array = this.getLayoutNames();
 		Set<String> set = new HashSet<String>();
 
-		for (String layoutName : layoutNames) {
-			if (set.contains(layoutName)) {
+		for (String element : array) {
+			if (set.contains(element)) {
 				return true;
 			} else {
-				set.add(layoutName);
+				set.add(element);
 			}
 		}
 		return false;
