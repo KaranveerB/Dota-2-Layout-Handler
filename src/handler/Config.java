@@ -7,13 +7,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ConfigFile {
+public class Config {
 
 	JSONObject[] layouts;
 
-	public ConfigFile(File configFile) throws Exception {
+	public Config(File configFile) throws Exception {
 		try {
-			layouts = ConfigFile.getLayouts(configFile);
+			layouts = Config.getLayouts(configFile);
 		} catch (Exception e) {
 			// Exception can be IOException or JSONException
 			// Grouped as Exception as they are handled the same (file can't be parsed)

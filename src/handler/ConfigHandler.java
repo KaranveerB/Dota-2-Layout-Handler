@@ -21,36 +21,20 @@ public class ConfigHandler {
 		String errorMsg = ""; // Error message if configs can't be parsed
 		// Shown after printing layout names for readability
 
-		ConfigFile importConfig;
-		ConfigFile exportConfig;
-
-		// Index of *LayoutNames corresponds to index of Layouts in ConfigFile.java
-		String[] importLayoutNames;
-		String[] exportLayoutNames;
+		Config importConfig;
+		Config exportConfig;
 
 		// Parse files and print out config names
 		try {
-			importConfig = new ConfigFile(importConfigFile);
-			importLayoutNames = importConfig.getLayoutNames();
-			System.out.println("\n-- Import Configs --");
-
-			for (String layoutName : importLayoutNames) {
-				System.out.println(layoutName);
-			}
-
+			importConfig = new Config(importConfigFile);
+			printLayoutNames(importConfig, "Import");
 		} catch (Exception e) {
 			errorMsg = "\nError: Couldn't parse import config file";
 		}
 
 		try {
-			exportConfig = new ConfigFile(exportConfigFile);
-			exportLayoutNames = exportConfig.getLayoutNames();
-			System.out.println("\n-- Export Configs --");
-
-			for (String layoutName : exportLayoutNames) {
-				System.out.println(layoutName);
-			}
-
+			exportConfig = new Config(exportConfigFile);
+			printLayoutNames(exportConfig, "Export");
 		} catch (Exception e) {
 			errorMsg += "\nError: Couldn't parse export config file";
 		}
@@ -79,6 +63,15 @@ public class ConfigHandler {
 		}
 
 		return;
+	}
+
+	private void printLayoutNames(Config config, String configType) throws Exception {
+		String[] importLayoutNames = config.getLayoutNames();
+		System.out.println("\n-- " + configType + " Config Layouts --");
+
+		for (String layoutName : importLayoutNames) {
+			System.out.println(layoutName);
+		}
 	}
 
 }
