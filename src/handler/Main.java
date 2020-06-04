@@ -10,7 +10,7 @@ public class Main {
 		} else {
 			System.out.printf("Importing from: %s\nExporting to: %s\n", args[0], args[1]);
 			ConfigHandler ch = new ConfigHandler();
-			ch.handleConfig(args[0], args[1]);
+			ch.handleConfigs(args[0], args[1]);
 		}
 	}
 }

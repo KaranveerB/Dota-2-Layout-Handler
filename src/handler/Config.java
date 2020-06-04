@@ -1,7 +1,9 @@
 package handler;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +46,20 @@ public class Config {
 		}
 
 		return layoutNames;
+	}
+
+	public boolean containsRepeats() {
+		String[] layoutNames = this.getLayoutNames();
+		Set<String> set = new HashSet<String>();
+
+		for (String layoutName : layoutNames) {
+			if (set.contains(layoutName)) {
+				return true;
+			} else {
+				set.add(layoutName);
+			}
+		}
+		return false;
 	}
 
 }

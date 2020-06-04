@@ -5,11 +5,11 @@ import java.io.IOException;
 
 public class ConfigHandler {
 
-	public void handleConfig(String importConfigPath, String exportConfigPath) {
+	public void handleConfigs(String importConfigPath, String exportConfigPath) {
 		File importConfigFile = new File(importConfigPath);
 		File exportConfigFile = new File(exportConfigPath);
 
-		checkIfFilesExist(importConfigFile, exportConfigFile);
+		ConfigHandler.checkIfFilesExist(importConfigFile, exportConfigFile);
 
 		try {
 			FileHandler.createBackup(exportConfigFile);
@@ -21,20 +21,20 @@ public class ConfigHandler {
 		String errorMsg = ""; // Error message if configs can't be parsed
 		// Shown after printing layout names for readability
 
-		Config importConfig;
-		Config exportConfig;
+		Config importConfig = null;
+		Config exportConfig = null;
 
 		// Parse files and print out config names
 		try {
 			importConfig = new Config(importConfigFile);
-			printLayoutNames(importConfig, "Import");
+			ConfigHandler.printLayoutNames(importConfig, "Import");
 		} catch (Exception e) {
 			errorMsg = "\nError: Couldn't parse import config file";
 		}
 
 		try {
 			exportConfig = new Config(exportConfigFile);
-			printLayoutNames(exportConfig, "Export");
+			ConfigHandler.printLayoutNames(exportConfig, "Export");
 		} catch (Exception e) {
 			errorMsg += "\nError: Couldn't parse export config file";
 		}
@@ -44,14 +44,20 @@ public class ConfigHandler {
 			System.exit(1);
 		}
 
+		if (importConfig.containsRepeats() || exportConfig.containsRepeats()) {
+			System.out.println("\nError: Duplicate layout names detected. This is not supported by Dota 2\n"
+					+ "Please create a new configuration or manually repair the old one");
+		}
+
 	}
 
-	private void checkIfFilesExist(File importConfigFile, File exportConfigFile) {
+	private static void checkIfFilesExist(File importConfigFile, File exportConfigFile) {
 		String errorMsg = "";
 
 		if (!importConfigFile.isFile()) {
 			errorMsg += "\nError: Could not find import config";
 		}
+
 		if (!exportConfigFile.isFile()) {
 			errorMsg += "\nError: Could not find export config";
 		}
@@ -65,7 +71,7 @@ public class ConfigHandler {
 		return;
 	}
 
-	private void printLayoutNames(Config config, String configType) throws Exception {
+	private static void printLayoutNames(Config config, String configType) throws Exception {
 		String[] importLayoutNames = config.getLayoutNames();
 		System.out.println("\n-- " + configType + " Config Layouts --");
 
