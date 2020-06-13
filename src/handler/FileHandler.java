@@ -1,87 +1,76 @@
 package handler;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class FileHandler {
-	
-	// Read the file's contents and returns it as a string
-	public static String readFile(File file) throws IOException {
-		String fileContent = "";
 
-		BufferedReader br = new BufferedReader(new FileReader(file));
-		StringBuilder sb = new StringBuilder();
+    // Read the file's contents and returns it as a string
+    public static String readFile(File file) throws IOException {
+        String fileContent = "";
 
-		try {
-			String line = br.readLine();
-			while (line != null) {
-				sb.append(line);
-				line = br.readLine();
-			}
-			fileContent = sb.toString();
-		} catch (IOException e) {
-			throw e;
-		} finally {
-			br.close();
-		}
-		return fileContent;
-	}
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        StringBuilder sb = new StringBuilder();
 
-	public static void createBackup(File file) throws IOException {
-		String fileName = file.getName();
-		String backupPath = file.getParent() + "/Hero Config Backups/";
+        String line = br.readLine();
 
-		File backupFile = null;
+        while (line != null) {
+            sb.append(line);
+            line = br.readLine();
+        }
+        fileContent = sb.toString();
 
-		// Create folder for backups if doesn't exist
-		File backupFolder = new File(backupPath);
+        return fileContent;
+    }
 
-		if (!backupFolder.exists()) {
-			backupFolder.mkdir();
-		}
+    public static void createBackup(File file) throws IOException {
+        String fileName = file.getName();
+        String backupPath = file.getParent() + "/Hero Config Backups/";
 
-		// Create backup suffixed with .bak
-		if (!new File(backupPath + fileName + ".bak").exists()) {
-			backupFile = new File(backupPath + fileName + ".bak");
-		} else {
-			boolean backupCreated = false;
+        File backupFile = null;
 
-			// Increment number at end of backup
-			for (int i = 1;; i++) {
-				if (!backupCreated) {
-					String backupFileName = backupPath + fileName + ".bak" + i;
-					if (!new File(backupFileName).exists()) {
-						backupFile = new File(backupFileName);
-						backupCreated = true;
-					}
-				} else
-					break;
-			}
-		}
+        // Create folder for backups if doesn't exist
+        File backupFolder = new File(backupPath);
 
-		// Transfer content of files
-		FileOutputStream outStream = new FileOutputStream(backupFile);
-		FileInputStream inStream = new FileInputStream(file);
+        if (!backupFolder.exists()) {
+            backupFolder.mkdir();
+        }
 
-		byte[] buffer = new byte[1024];
-		int length;
+        // Create backup suffixed with .bak
+        if (!new File(backupPath + fileName + ".bak").exists()) {
+            backupFile = new File(backupPath + fileName + ".bak");
+        } else {
+            boolean backupCreated = false;
 
-		// Copies over the files
-		try {
-			while ((length = inStream.read(buffer)) != -1) {
-				outStream.write(buffer, 0, length);
-			}
-		} catch (IOException e) {
-			throw e;
-		} finally {
-			inStream.close();
-			outStream.close();
-		}
+            // Increment number at end of backup
+            for (int i = 1; ; i++) {
+                if (!backupCreated) {
+                    String backupFileName = backupPath + fileName + ".bak" + i;
+                    if (!new File(backupFileName).exists()) {
+                        backupFile = new File(backupFileName);
+                        backupCreated = true;
+                    }
+                } else
+                    break;
+            }
+        }
 
-	}
+        // Transfer content of files
+        FileOutputStream outStream = new FileOutputStream(backupFile);
+        FileInputStream inStream = new FileInputStream(file);
+
+        byte[] buffer = new byte[1024];
+        int length;
+
+        // Copies over the files
+
+        while ((length = inStream.read(buffer)) != -1) {
+            outStream.write(buffer, 0, length);
+        }
+
+        inStream.close();
+        outStream.close();
+
+
+    }
 
 }

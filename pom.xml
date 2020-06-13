@@ -3,8 +3,10 @@
   <groupId>Dota-2-Layout-Handler</groupId>
   <artifactId>Dota-2-Layout-Handler</artifactId>
   <version>0.0.1</version>
+  <packaging>jar</packaging>
   <build>
     <sourceDirectory>src</sourceDirectory>
+    <finalName>D2LH</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

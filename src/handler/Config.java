@@ -1,75 +1,69 @@
 package handler;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 public class Config {
 
-	JSONObject[] layouts;
+    JSONObject[] layouts;
 
-	public Config(File configFile) throws Exception {
-		try {
-			layouts = Config.getLayouts(configFile);
-		} catch (Exception e) {
-			// Exception can be IOException or JSONException
-			// Grouped as Exception as they are handled the same (file can't be parsed)
-			throw e;
-		}
-	}
+    public Config(File configFile) throws Exception {
+        layouts = Config.getLayouts(configFile);
+    }
 
-	private static JSONObject[] getLayouts(File jsonFile) throws Exception {
-		String jsonFileContent = FileHandler.readFile(jsonFile);
-		JSONObject jsonFileObj = new JSONObject(jsonFileContent);
-		JSONArray configs = (JSONArray) jsonFileObj.get("configs");
+    private static JSONObject[] getLayouts(File jsonFile) throws Exception {
+        String jsonFileContent = FileHandler.readFile(jsonFile);
+        JSONObject jsonFileObj = new JSONObject(jsonFileContent);
+        JSONArray configs = (JSONArray) jsonFileObj.get("configs");
 
-		Iterator<Object> iterator = configs.iterator();
-		JSONObject[] layouts = new JSONObject[configs.length()];
+        Iterator<Object> iterator = configs.iterator();
+        JSONObject[] layouts = new JSONObject[configs.length()];
 
-		for (int i = 0; iterator.hasNext(); i++) {
-			layouts[i] = (JSONObject) iterator.next();
-		}
+        for (int i = 0; iterator.hasNext(); i++) {
+            layouts[i] = (JSONObject) iterator.next();
+        }
 
-		return layouts;
-	}
+        return layouts;
+    }
 
-	public String[] getLayoutNames() throws JSONException {
-		String[] layoutNames = new String[layouts.length];
+    public String[] getLayoutNames() throws JSONException {
+        String[] layoutNames = new String[layouts.length];
 
-		for (int i = 0; i < layoutNames.length; i++) {
-			layoutNames[i] = layouts[i].getString("config_name");
-		}
+        for (int i = 0; i < layoutNames.length; i++) {
+            layoutNames[i] = layouts[i].getString("config_name");
+        }
 
-		return layoutNames;
-	}
+        return layoutNames;
+    }
 
-	public boolean containsLayout(String newLayoutName) {
-		for (String layoutName : this.getLayoutNames()) {
-			if (newLayoutName.equals(layoutName)) {
-				return true;
-			}
-		}
+    public boolean containsLayout(String newLayoutName) {
+        for (String layoutName : this.getLayoutNames()) {
+            if (newLayoutName.equals(layoutName)) {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public boolean containsRepeats() {
-		String[] array = this.getLayoutNames();
-		Set<String> set = new HashSet<String>();
+    public boolean containsRepeats() {
+        String[] array = this.getLayoutNames();
+        Set<String> set = new HashSet<String>();
 
-		for (String element : array) {
-			if (set.contains(element)) {
-				return true;
-			} else {
-				set.add(element);
-			}
-		}
-		return false;
-	}
+        for (String element : array) {
+            if (set.contains(element)) {
+                return true;
+            } else {
+                set.add(element);
+            }
+        }
+        return false;
+    }
 
 }

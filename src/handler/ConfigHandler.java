@@ -6,6 +6,39 @@ import java.util.Scanner;
 
 public class ConfigHandler {
 
+	private static void checkIfFilesExist(File importConfigFile, File exportConfigFile) {
+		String errorMsg = "";
+
+		if (!importConfigFile.isFile()) {
+			errorMsg += "\nError: Could not find import config";
+		}
+
+		if (!exportConfigFile.isFile()) {
+			errorMsg += "\nError: Could not find export config";
+		}
+
+		// Handle error message
+		if (!errorMsg.isEmpty()) {
+			System.out.println(errorMsg);
+			System.exit(1);
+		}
+
+	}
+
+	private static void printLayoutNames(Config config, String configType) throws Exception {
+		String[] importLayoutNames = config.getLayoutNames();
+		System.out.println("\n-- " + configType + " Config Layouts --");
+
+		for (String layoutName : importLayoutNames) {
+			System.out.println(layoutName);
+		}
+	}
+
+	private static String promptForLayoutToExport(Scanner sc) {
+		System.out.print("\nEnter config to transfer: ");
+		return sc.nextLine().trim();
+	}
+
 	public void handleConfigs(String importConfigPath, String exportConfigPath) {
 		File importConfigFile = new File(importConfigPath);
 		File exportConfigFile = new File(exportConfigPath);
@@ -50,8 +83,7 @@ public class ConfigHandler {
 					+ "Please create a new configuration or manually repair the old one.");
 		}
 
-		boolean continueExecution = true;
-		while (continueExecution) {
+		while (true) {
 			Scanner sc = new Scanner(System.in);
 
 			String layoutToExport = "";
@@ -61,7 +93,8 @@ public class ConfigHandler {
 
 				if (!importConfig.containsLayout(selectedLayout)) {
 					System.out.println(
-							"\nError: Layout could not be found. Ensure the layout name entered is one of the following.");
+							"\nError: Layout could not be found." +
+									"Ensure the layout name entered is one of the following.");
 					try {
 						ConfigHandler.printLayoutNames(importConfig, "Import");
 					} catch (Exception e) {
@@ -73,54 +106,20 @@ public class ConfigHandler {
 				if (!exportConfig.containsLayout(selectedLayout)) {
 					layoutToExport = selectedLayout;
 				} else {
-					System.out.println(
-							"\nError: Exporting layout would result in repeat layout names. This is not supported by Dota 2.\n"
-									+ "Please manually change the name(s) of the relevent configuration(s) to avoid repeats.");
+					System.out.println("\nError: Exporting layout would result in a result in repeat names.\n" +
+							"This is not supported by Dota 2. Please manually edit the layout names to resolve this.");
 				}
 			}
 
-			// TODO: Export the layout
+			// TODO: Export Layout
 
 			System.out.print("\nExport another layout? y/N");
 			if (!sc.nextLine().toLowerCase().equals("y")) {
 				System.out.println("\nExiting");
+				System.exit(0);
 			}
 		}
 
-	}
-
-	private static void checkIfFilesExist(File importConfigFile, File exportConfigFile) {
-		String errorMsg = "";
-
-		if (!importConfigFile.isFile()) {
-			errorMsg += "\nError: Could not find import config";
-		}
-
-		if (!exportConfigFile.isFile()) {
-			errorMsg += "\nError: Could not find export config";
-		}
-
-		// Handle error message
-		if (!errorMsg.isEmpty()) {
-			System.out.println(errorMsg);
-			System.exit(1);
-		}
-
-		return;
-	}
-
-	private static void printLayoutNames(Config config, String configType) throws Exception {
-		String[] importLayoutNames = config.getLayoutNames();
-		System.out.println("\n-- " + configType + " Config Layouts --");
-
-		for (String layoutName : importLayoutNames) {
-			System.out.println(layoutName);
-		}
-	}
-
-	private static String promptForLayoutToExport(Scanner sc) {
-		System.out.print("\nEnter config to transfer: ");
-		return sc.nextLine().trim();
 	}
 
 }
