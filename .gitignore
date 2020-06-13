@@ -24,10 +24,8 @@ hs_err_pid*
 /bin/
 /target/
 
-# Eclipse
-.classpath
-.project
-.settings/*
+# Intellij
+/.idea/
 
 # Test Configurations
 /test_config/Hero Config Backups/*
