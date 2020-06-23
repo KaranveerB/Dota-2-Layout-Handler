@@ -4,73 +4,79 @@ import java.io.*;
 
 public class FileHandler {
 
-    // Read the file's contents and returns it as a string
-    public static String readFile(File file) throws IOException {
-        String fileContent = "";
+	// Read the file's contents and returns it as a string
+	public static String readFile(File file) throws IOException {
+		String fileContent = "";
 
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        StringBuilder sb = new StringBuilder();
+		BufferedReader br = new BufferedReader(new FileReader(file));
+		StringBuilder sb = new StringBuilder();
 
-        String line = br.readLine();
+		String line = br.readLine();
 
-        while (line != null) {
-            sb.append(line);
-            line = br.readLine();
-        }
-        fileContent = sb.toString();
+		while (line != null) {
+			sb.append(line);
+			line = br.readLine();
+		}
+		fileContent = sb.toString();
 
-        return fileContent;
-    }
+		return fileContent;
+	}
 
-    public static void createBackup(File file) throws IOException {
-        String fileName = file.getName();
-        String backupPath = file.getParent() + "/Hero Config Backups/";
+	public static void createBackup(File file) throws IOException {
+		String fileName = file.getName();
+		String backupPath = file.getParent() + "/Hero Config Backups/";
 
-        File backupFile = null;
+		File backupFile = null;
 
-        // Create folder for backups if doesn't exist
-        File backupFolder = new File(backupPath);
+		// Create folder for backups if doesn't exist
+		File backupFolder = new File(backupPath);
 
-        if (!backupFolder.exists()) {
-            backupFolder.mkdir();
-        }
+		if (!backupFolder.exists()) {
+			backupFolder.mkdir();
+		}
 
-        // Create backup suffixed with .bak
-        if (!new File(backupPath + fileName + ".bak").exists()) {
-            backupFile = new File(backupPath + fileName + ".bak");
-        } else {
-            boolean backupCreated = false;
+		// Create backup suffixed with .bak
+		if (!new File(backupPath + fileName + ".bak").exists()) {
+			backupFile = new File(backupPath + fileName + ".bak");
+		} else {
+			boolean backupCreated = false;
 
-            // Increment number at end of backup
-            for (int i = 1; ; i++) {
-                if (!backupCreated) {
-                    String backupFileName = backupPath + fileName + ".bak" + i;
-                    if (!new File(backupFileName).exists()) {
-                        backupFile = new File(backupFileName);
-                        backupCreated = true;
-                    }
-                } else
-                    break;
-            }
-        }
+			// Increment number at end of backup
+			for (int i = 1; ; i++) {
+				if (!backupCreated) {
+					String backupFileName = backupPath + fileName + ".bak" + i;
+					if (!new File(backupFileName).exists()) {
+						backupFile = new File(backupFileName);
+						backupCreated = true;
+					}
+				} else
+					break;
+			}
+		}
 
-        // Transfer content of files
-        FileOutputStream outStream = new FileOutputStream(backupFile);
-        FileInputStream inStream = new FileInputStream(file);
+		// Transfer content of files
+		FileOutputStream outStream = new FileOutputStream(backupFile);
+		FileInputStream inStream = new FileInputStream(file);
 
-        byte[] buffer = new byte[1024];
-        int length;
+		byte[] buffer = new byte[1024];
+		int length;
 
-        // Copies over the files
+		// Copies over the files
 
-        while ((length = inStream.read(buffer)) != -1) {
-            outStream.write(buffer, 0, length);
-        }
+		while ((length = inStream.read(buffer)) != -1) {
+			outStream.write(buffer, 0, length);
+		}
 
-        inStream.close();
-        outStream.close();
+		inStream.close();
+		outStream.close();
 
+	}
 
-    }
+	public static void writeToFile(String content, String path) throws IOException {
+		PrintWriter writer = new PrintWriter(new File(path));
+		System.out.println(content);
+		writer.print(content);
+		writer.flush();
+	}
 
 }

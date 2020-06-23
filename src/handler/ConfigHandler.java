@@ -1,5 +1,7 @@
 package handler;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -93,7 +95,7 @@ public class ConfigHandler {
 
 				if (!importConfig.containsLayout(selectedLayout)) {
 					System.out.println(
-							"\nError: Layout could not be found." +
+							"\nError: Layout could not be found. " +
 									"Ensure the layout name entered is one of the following.");
 					try {
 						ConfigHandler.printLayoutNames(importConfig, "Import");
@@ -111,7 +113,15 @@ public class ConfigHandler {
 				}
 			}
 
-			// TODO: Export Layout
+			JSONObject newConfigJSON = exportConfig.getJSONObject();
+			newConfigJSON.append("configs", importConfig.getLayout(layoutToExport));
+			System.out.println(newConfigJSON.toString(4));
+			try {
+				FileHandler.writeToFile(newConfigJSON.toString(4), exportConfigPath);
+				System.out.println("Layout exported successfully");
+			} catch (Exception e) {
+				System.out.println("\nError: Couldn't write new file. Backup may need to be restored.");
+			}
 
 			System.out.print("\nExport another layout? y/N");
 			if (!sc.nextLine().toLowerCase().equals("y")) {
