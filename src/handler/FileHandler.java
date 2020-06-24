@@ -12,7 +12,6 @@ public class FileHandler {
 		StringBuilder sb = new StringBuilder();
 
 		String line = br.readLine();
-
 		while (line != null) {
 			sb.append(line);
 			line = br.readLine();
@@ -24,56 +23,53 @@ public class FileHandler {
 
 	public static void createBackup(File file) throws IOException {
 		String fileName = file.getName();
-		String backupPath = file.getParent() + "/Hero Config Backups/";
+		String backupFolderPath = file.getParent() + "/Hero Config Backups/";
+		String backupFilePath = "";
 
-		File backupFile = null;
-
-		// Create folder for backups if doesn't exist
-		File backupFolder = new File(backupPath);
-
+		// Create folder for backups if it doesn't exist
+		File backupFolder = new File(backupFolderPath);
 		if (!backupFolder.exists()) {
 			backupFolder.mkdir();
 		}
 
-		// Create backup suffixed with .bak
-		if (!new File(backupPath + fileName + ".bak").exists()) {
-			backupFile = new File(backupPath + fileName + ".bak");
-		} else {
-			boolean backupCreated = false;
 
-			// Increment number at end of backup
+		// Create backup suffixed with .bak
+		if (!new File(backupFolderPath + fileName + ".bak").exists()) {
+			backupFilePath = backupFolderPath + fileName + ".bak";
+		} else {
+			boolean backupNameFound = false;
+
+			// Increment number after .bak to avoid name conflicts
 			for (int i = 1; ; i++) {
-				if (!backupCreated) {
-					String backupFileName = backupPath + fileName + ".bak" + i;
-					if (!new File(backupFileName).exists()) {
-						backupFile = new File(backupFileName);
-						backupCreated = true;
+				if (!backupNameFound) {
+					String tmpBackupFilePath = backupFolderPath + fileName + ".bak" + i;
+					if (!new File(tmpBackupFilePath).exists()) {
+						backupFilePath = tmpBackupFilePath;
+						backupNameFound = true;
 					}
 				} else
 					break;
 			}
 		}
 
-		// Transfer content of files
-		FileOutputStream outStream = new FileOutputStream(backupFile);
-		FileInputStream inStream = new FileInputStream(file);
+		writeToFile(file, backupFilePath);
+	}
+
+	private static void writeToFile(File contentFile, String path) throws IOException {
+		FileInputStream inStream = new FileInputStream(contentFile);
+		FileOutputStream outStream = new FileOutputStream(new File(path));
 
 		byte[] buffer = new byte[1024];
 		int length;
 
-		// Copies over the files
-
 		while ((length = inStream.read(buffer)) != -1) {
 			outStream.write(buffer, 0, length);
 		}
-
-		inStream.close();
-		outStream.close();
-
 	}
 
 	public static void writeToFile(String content, String path) throws IOException {
 		PrintWriter writer = new PrintWriter(new File(path));
+
 		System.out.println(content);
 		writer.print(content);
 		writer.flush();

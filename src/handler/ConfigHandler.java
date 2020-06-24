@@ -44,9 +44,9 @@ public class ConfigHandler {
 	public void handleConfigs(String importConfigPath, String exportConfigPath) {
 		File importConfigFile = new File(importConfigPath);
 		File exportConfigFile = new File(exportConfigPath);
-
 		ConfigHandler.checkIfFilesExist(importConfigFile, exportConfigFile);
 
+		// Backup files
 		try {
 			FileHandler.createBackup(exportConfigFile);
 			System.out.println("\nBackup created successfully.");
@@ -54,7 +54,7 @@ public class ConfigHandler {
 			System.out.println("\nWarning: Failed to create backup. Proceed with caution.");
 		}
 
-		String errorMsg = ""; // Error message if configs can't be parsed
+		String errorMsg = ""; // Error message if config(s) can't be parsed
 		// Shown after printing layout names for readability
 
 		Config importConfig = null;
@@ -80,16 +80,19 @@ public class ConfigHandler {
 			System.exit(1);
 		}
 
+		// Check for name existing name conflicts
 		if (importConfig.containsRepeats() || exportConfig.containsRepeats()) {
 			System.out.println("\nError: Existing duplicate layout names detected. This is not supported by Dota 2.\n"
 					+ "Please create a new configuration or manually repair the old one.");
 		}
 
+		// Transfer layout loop
 		while (true) {
 			Scanner sc = new Scanner(System.in);
 
 			String layoutToExport = "";
 
+			// Prompt for valid layout
 			while (layoutToExport.equals("")) {
 				String selectedLayout = promptForLayoutToExport(sc);
 
@@ -101,10 +104,11 @@ public class ConfigHandler {
 						ConfigHandler.printLayoutNames(importConfig, "Import");
 					} catch (Exception e) {
 						System.out.println("\nError: Couldn't parse import config file.");
+						System.exit(1);
 					}
-					continue;
 				}
 
+				// Check for potential name conflicts
 				if (!exportConfig.containsLayout(selectedLayout)) {
 					layoutToExport = selectedLayout;
 				} else {
@@ -113,6 +117,7 @@ public class ConfigHandler {
 				}
 			}
 
+			// Transfer Layout
 			JSONObject newConfigJSON = exportConfig.getJSONObject();
 			newConfigJSON.append("configs", importConfig.getLayout(layoutToExport));
 			System.out.println(newConfigJSON.toString(4));
@@ -123,6 +128,7 @@ public class ConfigHandler {
 				System.out.println("\nError: Couldn't write new file. Backup may need to be restored.");
 			}
 
+			// Prompt for exporting another layout
 			System.out.print("\nExport another layout? y/N");
 			if (!sc.nextLine().toLowerCase().equals("y")) {
 				System.out.println("\nExiting");

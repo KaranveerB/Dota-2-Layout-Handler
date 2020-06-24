@@ -3,7 +3,7 @@ package handler;
 public class Main {
 	public static void main(String[] args) {
 
-		// Check if config files supplied by user
+		// Check if config files specified in arguments
 		if (args.length != 2) {
 			System.out.println("Invalid command.\n" + "usage: D2LH <import config> <export config>");
 			System.exit(1);

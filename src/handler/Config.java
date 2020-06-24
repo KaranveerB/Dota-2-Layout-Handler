@@ -48,7 +48,6 @@ public class Config {
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -76,6 +75,7 @@ public class Config {
 				return layout;
 			}
 		}
+		// previous checks ensure this condition won't be met
 		return null;
 	}
 
