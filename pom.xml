@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>Dota-2-Layout-Handler</groupId>
   <artifactId>Dota-2-Layout-Handler</artifactId>
-  <version>0.0.1</version>
+  <version>1.0.0</version>
   <packaging>jar</packaging>
   <build>
     <sourceDirectory>src</sourceDirectory>
